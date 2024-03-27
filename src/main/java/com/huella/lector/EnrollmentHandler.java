@@ -1,4 +1,4 @@
-package com.huella.lector;
+package com.huella.lector;//DEPRECATED
 
 import com.digitalpersona.uareu.*;
 //import com.digitalpersona.uareu.Engine.PreEnrollmentFmd;

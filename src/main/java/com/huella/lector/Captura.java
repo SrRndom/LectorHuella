@@ -1,4 +1,4 @@
-package com.huella.lector;
+package com.huella.lector;  //BASE PARA PRUEBAS Y USO DEL SDK
 
 import com.digitalpersona.uareu.*;
 
