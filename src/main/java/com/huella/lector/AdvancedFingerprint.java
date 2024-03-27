@@ -1,19 +1,23 @@
-package com.huella.lector;//PRUEBA 9
+package com.huella.lector;
 
 import com.digitalpersona.uareu.*;
 import com.digitalpersona.uareu.Fid.Format;
 import com.digitalpersona.uareu.Reader.CaptureResult;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdvancedFingerprintExample {
+public class AdvancedFingerprint {
     private ReaderCollection readers;
     private Reader reader;
     private Engine engine;
-    private List<Fmd> enrolledFmds = new ArrayList<>(); // Lista para almacenar FMDs enrolados
-    private final static int FALSE_MATCH_RATE_THRESHOLD = 30000; // Umbral para considerar si una huella coincide o no
+    private List<String> enrolledFmdFilePaths = new ArrayList<>(); // Almacena las rutas de los archivos de FMDs enrolados
+    private final static String FMD_FILES_DIRECTORY = "C:\\Users\\HP PROBOOK\\eclipse-workspace\\lector\\fmd_locales\\"; // Ruta local por el momento para pruebas
 
-    public AdvancedFingerprintExample() throws UareUException {
+    public AdvancedFingerprint() throws UareUException {
         engine = UareUGlobal.GetEngine();
         readers = UareUGlobal.GetReaderCollection();
         readers.GetReaders();
@@ -39,24 +43,25 @@ public class AdvancedFingerprintExample {
             Fmd fmd = engine.CreateFmd(captureResult.image, Fmd.Format.ISO_19794_2_2005);
             System.out.println("FMD creado para enrolamiento.");
 
-            // Verificar si la huella ya está enrolada
-            boolean isAlreadyEnrolled = false;
-            for (Fmd enrolledFmd : enrolledFmds) {
-                int falsematch_rate = engine.Compare(enrolledFmd, 0, fmd, 0);
-                if (falsematch_rate < FALSE_MATCH_RATE_THRESHOLD) {
-                    isAlreadyEnrolled = true;
-                    break;
-                }
-            }
+            // Guardar el FMD en un archivo
+            String fmdFilePath = FMD_FILES_DIRECTORY + "FMD_" + System.currentTimeMillis() + ".bin";
+            saveFmdAsBytes(fmd, fmdFilePath);
 
-            if (!isAlreadyEnrolled) {
-                enrolledFmds.add(fmd);
-                System.out.println("Huella dactilar enrolada con éxito.");
-            } else {
-                System.out.println("Esta huella ya está enrolada.");
-            }
+            // Añadir la ruta del archivo a la lista de FMDs enrolados
+            enrolledFmdFilePaths.add(fmdFilePath);
+
+            System.out.println("Huella dactilar enrolada y guardada con éxito.");
         } else {
             System.err.println("La calidad de la captura no es buena: " + captureResult.quality.toString());
+        }
+    }
+
+    private void saveFmdAsBytes(Fmd fmd, String filepath) {
+        try {
+            Files.write(Paths.get(filepath), fmd.getData());
+            System.out.println("El FMD se ha guardado en: " + filepath);
+        } catch (IOException e) {
+            System.err.println("Error al guardar el FMD: " + e.getMessage());
         }
     }
 
@@ -67,7 +72,7 @@ public class AdvancedFingerprintExample {
 
     public static void main(String[] args) {
         try {
-            AdvancedFingerprintExample example = new AdvancedFingerprintExample();
+            AdvancedFingerprint example = new AdvancedFingerprint();
             example.initializeReader();
             example.captureAndEnrollFingerprint();
             example.closeReader();
