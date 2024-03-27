@@ -57,7 +57,7 @@ public class Captura {
 			} else {
 				System.out.println("No se encontró el lector o hay múltiples lectores conectados VERIFIQUE CONEXION.");// Esta
 																														// por
-																														// demass
+																														// demas
 			}
 		} catch (UareUException e) {
 			e.printStackTrace();

@@ -13,12 +13,12 @@ public class FingerprintManager {
 		this.engine = UareUGlobal.GetEngine();
 	}
 	
-	public void getFmdAsBytes (Fmd fmd, String filepath) throws IOException{
+	public void getFmdAsFile (Fmd fmd, String filepath) throws IOException{
 		Files.write(Paths.get(filepath),fmd.getData());
 		System.out.println("FMD Guardado en: " + filepath);
 	}
 	
-	public Fmd loadFromBytes(String filepath) throws IOException, UareUException {
+	public Fmd loadFromFile(String filepath) throws UareUException {
 		byte[] fmdData = Files.readAllBytes(Paths.get(filepath));
 		return engine.CreateFmd(fmdData, Format.ISO_19794_4_2005);
 	}
