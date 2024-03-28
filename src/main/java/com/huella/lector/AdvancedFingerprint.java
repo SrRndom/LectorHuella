@@ -1,4 +1,4 @@
-package com.huella.lector;
+package com.huella.lector;//old
 
 import com.digitalpersona.uareu.*;
 import com.digitalpersona.uareu.Fid.Format;
