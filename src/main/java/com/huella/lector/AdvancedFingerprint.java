@@ -15,7 +15,8 @@ public class AdvancedFingerprint {
     private Reader reader;
     private Engine engine;
     private List<String> enrolledFmdFilePaths = new ArrayList<>(); // Almacena las rutas de los archivos de FMDs enrolados
-    private final static String FMD_FILES_DIRECTORY = "C:\\Users\\HP PROBOOK\\eclipse-workspace\\lector\\fmd_locales\\"; // Ruta local por el momento para pruebas
+    private final static String FMD_FILES_DIRECTORY = "C:\\Users\\HP PROBOOK\\eclipse-workspace\\lector\\fmd_locales\\"; 
+    // Ruta local por el momento para pruebas
 
     public AdvancedFingerprint() throws UareUException {
         engine = UareUGlobal.GetEngine();
@@ -64,6 +65,17 @@ public class AdvancedFingerprint {
             System.err.println("Error al guardar el FMD: " + e.getMessage());
         }
     }
+    
+ 
+    
+//    private Fmd loadFmdFromFile (String filepath) throws IOException, UareUException{
+//    	byte[] fmdData = Files.readAllBytes(Paths.get(filepath));
+//    	return engine.CreateFmd(fmdData, Fmd.Format.ISO_19794_2_2005);
+//    }
+//    
+//    public void compareFingerprints() throws IOException, UareUException{
+//    	Fmd fmdToCompare =  null;
+//    }
 
     public void closeReader() throws UareUException {
         reader.Close();
