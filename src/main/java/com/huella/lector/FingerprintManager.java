@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Scanner;
 
 //import java.io.IOException;
 //import java.nio.file.Files;
@@ -77,19 +78,53 @@ public class FingerprintManager {
         }
     }
     
-    public void saveFingerprintToFMD(Fmd fmd, int userId) {
-        String sql = "INSERT INTO fingerprints (fmd, userId) VALUES (?, ?)";
+    public void saveFingerprintToFMD(Fmd fmd, int userId, String userName) {
+        String sql = "INSERT INTO fingerprints (fmd, userid, UserName) VALUES (?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             byte[] fmdData = fmd.getData();
             stmt.setBytes(1, fmdData);
             stmt.setInt(2, userId);
+            stmt.setString(3, userName); // Agregar el userName al PreparedStatement
             stmt.executeUpdate();
-            System.out.println("Huella dactilar almacenada con éxito.");
+            System.out.println("Huella dactilar y nombre de usuario almacenados con éxito.");
         } catch (SQLException e) {
-            System.err.println("Error al guardar la huella dactilar: " + e.getMessage());
+            System.err.println("Error al guardar la huella dactilar y el nombre de usuario: " + e.getMessage());
         }
     }
+
+    
+//    Esto solo sobreescribe el id1, util para probar//
+//    public void saveOrUpdateFingerprint(Fmd fmd, int userId) {
+//        String queryCheck = "SELECT COUNT(*) FROM fingerprints WHERE userid = ?";
+//        String insertSql = "INSERT INTO fingerprints (fmd, userid) VALUES (?, ?)";
+//        String updateSql = "UPDATE fingerprints SET fmd = ? WHERE userid = ?";
+//        try (Connection conn = DBConnection.getConnection();
+//             PreparedStatement checkStmt = conn.prepareStatement(queryCheck);
+//             PreparedStatement insertStmt = conn.prepareStatement(insertSql);
+//             PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+//
+//            // Verificar si existe un registro para el userId
+//            checkStmt.setInt(1, userId);
+//            ResultSet rs = checkStmt.executeQuery();
+//            if (rs.next() && rs.getInt(1) > 0) {
+//                // Actualizar registro existente
+//                updateStmt.setBytes(1, fmd.getData());
+//                updateStmt.setInt(2, userId);
+//                updateStmt.executeUpdate();
+//                System.out.println("Huella dactilar actualizada con éxito para el usuario " + userId);
+//            } else {
+//                // Insertar nuevo registro
+//                insertStmt.setBytes(1, fmd.getData());
+//                insertStmt.setInt(2, userId);
+//                insertStmt.executeUpdate();
+//                System.out.println("Huella dactilar almacenada con éxito para el usuario " + userId);
+//            }
+//        } catch (SQLException e) {
+//            System.err.println("Error al guardar o actualizar la huella dactilar: " + e.getMessage());
+//        }
+//    }
+
 
     public Fmd retrieveFingerprintByUserId(int userId) {
         String sql = "SELECT fmd FROM fingerprints WHERE userId = ?";
@@ -112,6 +147,7 @@ public class FingerprintManager {
         System.out.println("Lector cerrado.");
     }
 
+//    Metodo main original, mantiene la huella en memoria temporal para validar que sea la misma que se registro al momento
 //    public static void main(String[] args) {
 //        try {
 //            FingerprintManager example = new FingerprintManager();
@@ -124,35 +160,94 @@ public class FingerprintManager {
 //            e.printStackTrace();
 //        }
 //    }
+
+//		Metodo main, guarda en BD con el userid 1, pero no genera mas opciones
+//    public static void main(String[] args) {
+//        try {
+//            FingerprintManager example = new FingerprintManager();
+//            example.initializeReader();
+//            
+//            // Asumimos un ID de usuario arbitrario para este ejemplo
+//            int userId = 1;
+//            
+//            // Captura y enrola la huella dactilar del usuario
+//            example.captureAndEnrollFingerprint();
+//            
+//            // Guarda la huella enrolada (FMD) en la base de datos asociada con el userId
+//            example.saveFingerprintToFMD(example.enrollmentFmd, userId);
+//            
+//            // Simula un flujo donde necesitas recuperar el FMD almacenado y verificarlo con una nueva captura
+//            // Por ejemplo, esto podría ser en un nuevo inicio de sesión o una verificación de identidad
+//            Fmd fmdFromDB = example.retrieveFingerprintByUserId(userId);
+//            if (fmdFromDB != null) {
+//                example.enrollmentFmd = fmdFromDB; // Actualiza el FMD enrolado con el recuperado de la BD
+//                boolean verified = example.verifyFingerprint(); // Verifica la nueva huella contra el FMD recuperado
+//                System.out.println("Resultado de verificación: " + verified);
+//            } else {
+//                System.out.println("No se encontró un FMD para el userID proporcionado.");
+//            }
+//            
+//            example.closeReader();
+//        } catch (UareUException e) {
+//            e.printStackTrace();
+//        }
+//    }
     public static void main(String[] args) {
         try {
             FingerprintManager example = new FingerprintManager();
             example.initializeReader();
-            
-            // Asumimos un ID de usuario arbitrario para este ejemplo
-            int userId = 1;
-            
-            // Captura y enrola la huella dactilar del usuario
-            example.captureAndEnrollFingerprint();
-            
-            // Guarda la huella enrolada (FMD) en la base de datos asociada con el userId
-            example.saveFingerprintToFMD(example.enrollmentFmd, userId);
-            
-            // Simula un flujo donde necesitas recuperar el FMD almacenado y verificarlo con una nueva captura
-            // Por ejemplo, esto podría ser en un nuevo inicio de sesión o una verificación de identidad
-            Fmd fmdFromDB = example.retrieveFingerprintByUserId(userId);
-            if (fmdFromDB != null) {
-                example.enrollmentFmd = fmdFromDB; // Actualiza el FMD enrolado con el recuperado de la BD
-                boolean verified = example.verifyFingerprint(); // Verifica la nueva huella contra el FMD recuperado
-                System.out.println("Resultado de verificación: " + verified);
-            } else {
-                System.out.println("No se encontró un FMD para el userID proporcionado.");
+
+            Scanner scanner = new Scanner(System.in);
+            boolean exit = false;
+
+            while (!exit) {
+                System.out.println("Seleccione una opción:");
+                System.out.println("1. Enrolar nueva huella");
+                System.out.println("2. Verificar huella existente");
+                System.out.println("3. Salir");
+                System.out.print("Opción: ");
+                int option = scanner.nextInt();
+
+                switch (option) {
+                    case 1:
+                        scanner.nextLine(); // Limpiar buffer de entrada
+                        System.out.print("Ingrese el ID de usuario para enrolar: ");
+                        int enrollUserId = scanner.nextInt(); scanner.nextLine(); // Consumir el salto de línea
+
+                        System.out.print("Ingrese el nombre de usuario para enrolar: ");
+                        String enrollUserName = scanner.nextLine();
+
+                        example.captureAndEnrollFingerprint();
+                        example.saveFingerprintToFMD(example.enrollmentFmd, enrollUserId, enrollUserName);
+                        break;
+                    case 2:
+                        scanner.nextLine(); // Limpiar buffer de entrada
+                        System.out.print("Ingrese el ID de usuario para verificar: ");
+                        int verifyUserId = scanner.nextInt(); scanner.nextLine(); // Asegurarse de consumir el resto de la línea
+
+                        Fmd fmdFromDB = example.retrieveFingerprintByUserId(verifyUserId);
+                        if (fmdFromDB != null) {
+                            example.enrollmentFmd = fmdFromDB; // Asegurarse de usar el FMD correcto para la verificación
+                            boolean verified = example.verifyFingerprint();
+                            System.out.println("Resultado de verificación: " + verified);
+                        } else {
+                            System.out.println("No se encontró un FMD para el userID proporcionado.");
+                        }
+                        break;
+                    case 3:
+                        exit = true;
+                        break;
+                    default:
+                        System.out.println("Opción no válida.");
+                        break;
+                }
             }
-            
+
             example.closeReader();
         } catch (UareUException e) {
             e.printStackTrace();
         }
     }
+
 
 }
