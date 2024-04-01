@@ -2,7 +2,7 @@ package com.huella.lector;//Actual Funcional
 
 import com.digitalpersona.uareu.*;
 import com.digitalpersona.uareu.Fid.Format;
-import com.digitalpersona.uareu.Reader.CaptureQuality;
+//import com.digitalpersona.uareu.Reader.CaptureQuality;
 import com.digitalpersona.uareu.Reader.CaptureResult;
 import com.digitalpersona.uareu.Reader.Priority;
 
