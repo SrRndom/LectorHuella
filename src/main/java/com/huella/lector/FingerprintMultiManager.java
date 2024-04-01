@@ -10,7 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+//import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,12 +34,12 @@ public class FingerprintMultiManager {
 		reader = readers.get(0); // Tomar el primer lector disponible
 	}
 
-	public void initializeReader() throws UareUException {
+	public void initializeReader() throws UareUException { //Inicia el lector automaticamente
 		reader.Open(Priority.EXCLUSIVE);
 		System.out.println("Lector iniciado: " + reader.GetStatus());
 	}
 
-	public void captureAndEnrollFingerprint() throws UareUException {
+	public void captureAndEnrollFingerprint() throws UareUException {// Registro de Huellas
 		System.out.println("Coloca tu dedo en el lector para enrolar...");
 
 		CaptureResult captureResult = reader.Capture(Format.ISO_19794_4_2005, Reader.ImageProcessing.IMG_PROC_DEFAULT,
@@ -53,7 +53,7 @@ public class FingerprintMultiManager {
 		}
 	}
 
-	public boolean verifyFingerprint() throws UareUException {
+	public boolean verifyFingerprint() throws UareUException { //Verificacion de Huellas Registradas o No
 		System.out.println("Coloca tu dedo en el lector para verificar...");
 
 		CaptureResult captureResult = reader.Capture(Format.ISO_19794_4_2005, Reader.ImageProcessing.IMG_PROC_DEFAULT,
@@ -120,7 +120,7 @@ public class FingerprintMultiManager {
 //        }
 //    }
 
-	public Fmd retrieveFingerprintByUserId(int userId) {
+	public Fmd retrieveFingerprintByUserId(int userId) { //Solicita Usuario con ID
 		String sql = "SELECT fmd FROM Huellas WHERE userId = ?";
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setInt(1, userId);
@@ -192,7 +192,7 @@ public class FingerprintMultiManager {
 		return fmdList;
 	}
 
-	public void enrollMultipleFingerprints(int userId, String userName) throws UareUException {
+	public void enrollMultipleFingerprints(int userId, String userName) throws UareUException { //Guardar multiples huellas
 		List<String> fingers = Arrays.asList("índice", "anular", "pulgar");
 
 		for (String finger : fingers) {
@@ -276,7 +276,7 @@ public class FingerprintMultiManager {
 					exit = true;
 					break;
 				default:
-					System.out.println("Opción no válida.");
+					System.out.println("Opción no válida.");//DED
 					break;
 				}
 			}
