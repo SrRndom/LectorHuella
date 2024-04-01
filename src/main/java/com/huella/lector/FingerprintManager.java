@@ -223,7 +223,7 @@ public class FingerprintManager {
                     case 2:
                         scanner.nextLine(); // Limpiar buffer de entrada
                         System.out.print("Ingrese el ID de usuario para verificar: ");
-                        int verifyUserId = scanner.nextInt(); scanner.nextLine(); // Asegurarse de consumir el resto de la línea
+                        int verifyUserId = scanner.nextInt(); scanner.nextLine(); // Asegurarse de consumir el resto de la línea como si fuese polvo 
 
                         Fmd fmdFromDB = example.retrieveFingerprintByUserId(verifyUserId);
                         if (fmdFromDB != null) {
