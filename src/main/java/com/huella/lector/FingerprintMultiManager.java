@@ -1,4 +1,4 @@
-package com.huella.lector;
+package com.huella.lector; // Funcional Multi Huellas
 
 import com.digitalpersona.uareu.*;
 import com.digitalpersona.uareu.Fid.Format;
@@ -34,7 +34,7 @@ public class FingerprintMultiManager {
 		reader = readers.get(0); // Tomar el primer lector disponible
 	}
 
-	public void initializeReader() throws UareUException { //Inicia el lector automaticamente
+	public void initializeReader() throws UareUException { // Inicia el lector automaticamente
 		reader.Open(Priority.EXCLUSIVE);
 		System.out.println("Lector iniciado: " + reader.GetStatus());
 	}
@@ -53,7 +53,7 @@ public class FingerprintMultiManager {
 		}
 	}
 
-	public boolean verifyFingerprint() throws UareUException { //Verificacion de Huellas Registradas o No
+	public boolean verifyFingerprint() throws UareUException { // Verificacion de Huellas Registradas o No
 		System.out.println("Coloca tu dedo en el lector para verificar...");
 
 		CaptureResult captureResult = reader.Capture(Format.ISO_19794_4_2005, Reader.ImageProcessing.IMG_PROC_DEFAULT,
@@ -95,33 +95,8 @@ public class FingerprintMultiManager {
 		}
 	}
 
-	// Método para verificar si el usuario existe, si no lo creara
-//    private int checkOrCreateUser(int userId, String userName) throws SQLException {
-//        String sqlCheck = "SELECT userid FROM Usuarios WHERE username = ?";
-//        String sqlInsert = "INSERT INTO Usuarios (username) VALUES (?)";
-//        try (Connection conn = DBConnection.getConnection();
-//             PreparedStatement checkStmt = conn.prepareStatement(sqlCheck, Statement.RETURN_GENERATED_KEYS);
-//             PreparedStatement insertStmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
-//            
-//            checkStmt.setString(1, userName);
-//            ResultSet rs = checkStmt.executeQuery();
-//            if(rs.next()) {
-//                return rs.getInt("userid");
-//            } else {
-//                insertStmt.setString(1, userName);
-//                insertStmt.executeUpdate();
-//                ResultSet rsInsert = insertStmt.getGeneratedKeys();
-//                if(rsInsert.next()) {
-//                    return rsInsert.getInt(1); // Retorna el nuevo userID generado
-//                } else {
-//                    throw new SQLException("Error al crear el usuario.");
-//                }
-//            }
-//        }
-//    }
-
-	public Fmd retrieveFingerprintByUserId(int userId) { //Solicita Usuario con ID
-		String sql = "SELECT fmd FROM Huellas WHERE userId = ?";
+	public Fmd retrieveFingerprintByUserId(int userId) { // Solicita Usuario con ID
+		String sql = "SELECT fmd FROM fingerprints WHERE userid = ?";
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setInt(1, userId);
 			ResultSet rs = stmt.executeQuery();
@@ -192,7 +167,8 @@ public class FingerprintMultiManager {
 		return fmdList;
 	}
 
-	public void enrollMultipleFingerprints(int userId, String userName) throws UareUException { //Guardar multiples huellas
+	public void enrollMultipleFingerprints(int userId, String userName) throws UareUException { // Guardar multiples
+																								// huellas
 		List<String> fingers = Arrays.asList("índice", "anular", "pulgar");
 
 		for (String finger : fingers) {
@@ -202,6 +178,12 @@ public class FingerprintMultiManager {
 			System.out.println("Huella del dedo " + finger + " almacenada con éxito.");
 		}
 	}
+	
+//	SOLO NECESARIO SI EJECUTO LA GUI
+	public Fmd getEnrollmentFmd() {
+	    return enrollmentFmd;
+	}
+
 
 	public void closeReader() throws UareUException {
 		reader.Close();
@@ -221,7 +203,7 @@ public class FingerprintMultiManager {
 				System.out.println("1. Enrolar nueva huella");
 				System.out.println("2. Verificar huella existente");
 				System.out.println("3. Validacion Directa");
-				System.out.println("4. Prueba Multiple");
+				System.out.println("4. Registro Multiples Huellas");
 				System.out.println("5. Salir");
 				System.out.print("Opción: ");
 				int option = scanner.nextInt();
@@ -276,7 +258,7 @@ public class FingerprintMultiManager {
 					exit = true;
 					break;
 				default:
-					System.out.println("Opción no válida.");//DED
+					System.out.println("Opción no válida.");// DED
 					break;
 				}
 			}

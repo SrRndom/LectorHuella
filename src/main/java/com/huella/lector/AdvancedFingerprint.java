@@ -1,4 +1,4 @@
-package com.huella.lector;//old
+package com.huella.lector;//Version Vieja Intento con Locales
 
 import com.digitalpersona.uareu.*;
 import com.digitalpersona.uareu.Fid.Format;

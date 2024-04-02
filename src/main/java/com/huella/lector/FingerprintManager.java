@@ -1,4 +1,4 @@
-package com.huella.lector;//Actual Funcional 
+package com.huella.lector;//Funcional Solo registra 1 huella a la vez 
 
 import com.digitalpersona.uareu.*;
 import com.digitalpersona.uareu.Fid.Format;
@@ -128,6 +128,31 @@ public class FingerprintManager {
 //            System.err.println("Error al guardar o actualizar la huella dactilar: " + e.getMessage());
 //        }
 //    }
+    
+	// Método para verificar si el usuario existe, si no lo creara
+//  private int checkOrCreateUser(int userId, String userName) throws SQLException {
+//      String sqlCheck = "SELECT userid FROM Usuarios WHERE username = ?";
+//      String sqlInsert = "INSERT INTO Usuarios (username) VALUES (?)";
+//      try (Connection conn = DBConnection.getConnection();
+//           PreparedStatement checkStmt = conn.prepareStatement(sqlCheck, Statement.RETURN_GENERATED_KEYS);
+//           PreparedStatement insertStmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
+//          
+//          checkStmt.setString(1, userName);
+//          ResultSet rs = checkStmt.executeQuery();
+//          if(rs.next()) {
+//              return rs.getInt("userid");
+//          } else {
+//              insertStmt.setString(1, userName);
+//              insertStmt.executeUpdate();
+//              ResultSet rsInsert = insertStmt.getGeneratedKeys();
+//              if(rsInsert.next()) {
+//                  return rsInsert.getInt(1); // Retorna el nuevo userID generado
+//              } else {
+//                  throw new SQLException("Error al crear el usuario.");
+//              }
+//          }
+//      }
+//  }
 
 
     public Fmd retrieveFingerprintByUserId(int userId) {
